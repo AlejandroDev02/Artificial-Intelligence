@@ -34,7 +34,7 @@ pd.set_option("display.float_format", "{:.3f}".format)
 data_path = Path(__file__).parent / "datos.csv"
 
 # index_col="ID" makes the ID column the row label, so it isn't used as a number.
-data = pd.read_csv(data_path, index_col="ID")
+data = pd.read_csv(data_path, index_col="ID") #ID identifies each sample (for example, M020), but it isn’t one of the measurements we want K-Means to group samples by. K-Means calculates distances from the feature values, so including an ID as a feature would distort those distances.
 
 # X is a table of plain numbers: 130 rows (samples) x 7 columns (features).
 X = data.to_numpy()
@@ -45,7 +45,8 @@ print(f"Loaded {X.shape[0]} samples with {X.shape[1]} features each.\n")
 # 2. Choose the starting centroids given by the workshop
 # ---------------------------------------------------------------------------
 # Row order matters: M020 is C1, M056 is C2 and M116 is C3.
-initial_centroids = data.loc[["M020", "M056", "M116"]].to_numpy()
+initial_centroids = data.loc[["M020", "M056", "M116"]].to_numpy() #labels are names attached to rows or columns
+#.iloc, which selects by numeric position, .loc selects by label.
 
 
 # ---------------------------------------------------------------------------

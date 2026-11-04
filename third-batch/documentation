@@ -1,0 +1,66 @@
+
+## Settings to change
+| Setting | What it does |
+|---|---|
+| `CSV_FILE` | The file to read |
+| `NUM_CLUSTERS` | The number of groups, or `"elbow"` to use the elbow's suggestion |
+| `INITIAL_CENTROIDS` | Starting points, given as sample IDs, row numbers or coordinates; `None` lets the script choose |
+| `CENTROIDS_TO_SHOW` | Centroids to show after a given iteration: `(3, 1)` means "third centroid after one iteration" |
+| `NEW_SAMPLES` | New samples to place in groups |
+| `EXPECTED_...` | Answers you want to compare against |
+
+**Before using other data:** clear `NEW_SAMPLES`, `CENTROIDS_TO_SHOW` and the `EXPECTED_...` settings, and set `INITIAL_CENTROIDS` to your own values or `None`. They still contain the workshop's values.
+
+## How the elbow method works
+The elbow method finds **how many** centroids to use, while K-Means still finds where they go. It relies on inertia, which measures how far samples are from their centroids, so lower means tighter groups.
+
+Inertia always drops as you add groups, so the lowest value isn't automatically the best. Instead, you look for the point where adding another group stops helping much:
+
+| k | Inertia | Drop from previous k |
+|---|---|---|
+| 2 | 1206.492 | 1534.502 |
+| **3** | **405.031** | **801.461** |
+| 4 | 373.107 | 31.924 |
+
+Going to k = 3 helps about 25 times more than going to k = 4, so the elbow is at 3.
+
+The script also shows a silhouette score, a second measure of how well separated the groups are. It also points to k = 3 here (0.667, where higher is better). If the two measures disagree or the bend is weak, the script tells you, and choosing k becomes a judgment call.
+
+## How the CSV reader works
+- **Header row:** the first row counts as a header if it has text where the rows below have numbers.
+- **ID column:** it looks for a name like `ID` or `codigo`, a text column with all different values, or a first column that just counts rows.
+- **Spanish Excel files:** it handles semicolon-separated files with decimal commas, like `1,5;2,5`.
+- **Unusable data:** it skips other text columns and removes rows with missing values, and warns you about both.
+
+The script prints what it detected at the start of every run. A numeric ID in shuffled order, or column names that are numbers, can't always be detected. If that happens, set `ID_COLUMN` or `HAS_HEADER` yourself.
+
+## How to confirm the output is right
+Every run ends with a `CHECKS` section with four parts:
+1. **K-Means rules:** for example, every sample must be closest to its own group's centroid, and every centroid must be the average of its group.
+2. **Scikit-learn comparison:** the step-by-step K-Means and scikit-learn must get the same results from the same starting centroids.
+3. **Your answers:** type answers from your teacher or a hand calculation into `EXPECTED_...`, and each one is marked `MATCH` or `DIFFERENT`.
+4. **Worked example:** it prints one distance and one average so you can repeat them with a calculator or Excel.
+
+These checks confirm the calculation, not that your settings are right. If your teacher gives you starting centroids, you need to use those, because different starts can change the results and the group numbers.
+
+## What I tested
+- **CSV formats:** all header and ID combinations gave identical numbers, including semicolon, tab and pipe separators.
+- **Finding k:** I tested data with 2 to 8 known groups. When the groups were clearly separated, it found the right number every time; when they overlapped heavily, it was right about 78% of the time.
+- **Wrong answers:** deliberately wrong expected answers were all marked `DIFFERENT`.
+- **Speed:** your workshop data runs almost instantly, while 100,000 samples with 10 features took about 90 seconds here.
+
+I also replaced my first elbow formula after this testing, because it was right only about 40% of the time on the same data.
+
+## Limits to keep in mind
+- The elbow method can't suggest k = 1, or the highest k you test. Set `MAX_K_TO_TEST` above the number of groups you expect.
+- With `INITIAL_CENTROIDS = None`, group numbers are arbitrary, so your Group 1 might be someone else's Group 2 even when the groups are the same. Comparing with `EXPECTED_...` only makes sense when you use the same starting centroids.
+- If features use very different units, such as age and salary, set `SCALE_FEATURES = True`. The script warns you when the spreads differ a lot.
+
+
+#----------------------
+
+When it finishes, check the last line:
+
+RESULT: all checks passed. The calculations passed every check.
+RESULT: ... need attention Look for FAIL or DIFFERENT above it to see which item didn’t pass.
+ERROR: ... The script stopped before finishing, usually because of a value in your settings or a problem in the CSV. The message tells you what to fix.
