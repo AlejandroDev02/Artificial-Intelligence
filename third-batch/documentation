@@ -56,7 +56,6 @@ I also replaced my first elbow formula after this testing, because it was right 
 - With `INITIAL_CENTROIDS = None`, group numbers are arbitrary, so your Group 1 might be someone else's Group 2 even when the groups are the same. Comparing with `EXPECTED_...` only makes sense when you use the same starting centroids.
 - If features use very different units, such as age and salary, set `SCALE_FEATURES = True`. The script warns you when the spreads differ a lot.
 
-
 #----------------------
 
 When it finishes, check the last line:
