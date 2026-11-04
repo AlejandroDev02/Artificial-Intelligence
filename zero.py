@@ -13,3 +13,4 @@
 #pip install numpy scipy matplotlib
 
 #if no perms: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+#if no python found (install python then lmfao)
